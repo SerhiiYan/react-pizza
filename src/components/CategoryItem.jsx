@@ -1,9 +1,9 @@
 import React from "react";
 
-const CategoryItem = ({ title, onClickCategory, index, active }) => {
+const CategoryItem = ({ title, onChangeCategory, index, active }) => {
   return (
     <>
-      <li className={active} onClick={() => onClickCategory(index)}>
+      <li className={active} onClick={() => onChangeCategory(index)}>
         {title}
       </li>
     </>

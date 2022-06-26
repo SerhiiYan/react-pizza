@@ -1,14 +1,25 @@
 import React from "react";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setSortCategory } from "../redux/slices/filterSlice";
 
 function Sort() {
+  const dispatch = useDispatch();
+  const sort = useSelector((state) => state.filter.sort);
+  console.log(sort);
   const [isVisible, setIsVisible] = useState(false);
-  const [selectedSort, setSelectedSort] = useState(0);
-  const list = ["popularity", "price", "alphabet"];
-  const sortName = list[selectedSort];
+  const list = [
+    { name: "popularity(desc)", sortProperty: "rating" },
+    { name: "popularity(asc)", sortProperty: "-rating" },
+    { name: "price(desc)", sortProperty: "price" },
+    { name: "price(asc)", sortProperty: "-price" },
+    { name: "alphabet(desc)", sortProperty: "title" },
+    { name: "alphabet(asc)", sortProperty: "-title" },
+  ];
 
-  const onClickSortItem = (index) => {
-    setSelectedSort(index);
+  const onClickSortItem = (obj) => {
+    console.log(obj);
+    dispatch(setSortCategory(obj));
     setIsVisible(false);
   };
 
@@ -28,20 +39,25 @@ function Sort() {
           />
         </svg>
         <b>Sort :</b>
-        <span onClick={() => setIsVisible(!isVisible)}>{sortName}</span>
+        <span onClick={() => setIsVisible(!isVisible)}>{sort.name}</span>
       </div>
       {isVisible && (
         <div className="sort__popup">
           <ul>
-            {list.map((item, index) => (
-              <li
-                key={index}
-                onClick={() => onClickSortItem(index)}
-                className={selectedSort === index ? "active" : ""}
-              >
-                {item}
-              </li>
-            ))}
+            {list.map((obj, index) => {
+              console.log(obj);
+              return (
+                <li
+                  key={index}
+                  onClick={() => onClickSortItem(obj)}
+                  className={
+                    sort.sortProperty === obj.sortProperty ? "active" : ""
+                  }
+                >
+                  {obj.name}
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}
