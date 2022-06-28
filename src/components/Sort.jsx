@@ -1,21 +1,22 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useRef } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSortCategory } from "../redux/slices/filterSlice";
+
+export const sortList = [
+  { name: "popularity(desc)", sortProperty: "rating" },
+  { name: "popularity(asc)", sortProperty: "-rating" },
+  { name: "price(desc)", sortProperty: "price" },
+  { name: "price(asc)", sortProperty: "-price" },
+  { name: "alphabet(desc)", sortProperty: "title" },
+  { name: "alphabet(asc)", sortProperty: "-title" },
+];
 
 function Sort() {
   const dispatch = useDispatch();
   const sort = useSelector((state) => state.filter.sort);
-  console.log(sort);
   const [isVisible, setIsVisible] = useState(false);
-  const list = [
-    { name: "popularity(desc)", sortProperty: "rating" },
-    { name: "popularity(asc)", sortProperty: "-rating" },
-    { name: "price(desc)", sortProperty: "price" },
-    { name: "price(asc)", sortProperty: "-price" },
-    { name: "alphabet(desc)", sortProperty: "title" },
-    { name: "alphabet(asc)", sortProperty: "-title" },
-  ];
+  const sortRef = useRef(null);
 
   const onClickSortItem = (obj) => {
     console.log(obj);
@@ -23,8 +24,21 @@ function Sort() {
     setIsVisible(false);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.path.includes(sortRef.current)) {
+        setIsVisible(false);
+      }
+    };
+    document.body.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.body.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="sort">
+    <div ref={sortRef} className="sort">
       <div className="sort__label">
         <svg
           width="10"
@@ -44,7 +58,7 @@ function Sort() {
       {isVisible && (
         <div className="sort__popup">
           <ul>
-            {list.map((obj, index) => {
+            {sortList.map((obj, index) => {
               console.log(obj);
               return (
                 <li

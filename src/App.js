@@ -1,5 +1,5 @@
 import "./scss/app.scss";
-import React, { useEffect, useState, createContext } from "react";
+import React, { useState, createContext } from "react";
 import { Routes, Route } from "react-router-dom";
 import Cart from "./pages/Cart";
 import Header from "./components/Header";
