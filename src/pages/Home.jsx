@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import React, { useEffect, useRef } from "react";
 import qs from "qs";
 import { useNavigate } from "react-router-dom";
 import {
+  selectFilter,
   setCategoryId,
   setCurrentPage,
   setFilters,
@@ -13,17 +13,17 @@ import Sort, { sortList } from "../components/Sort";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 import PizzaBlock from "../components/PizzaBlock";
 import Pagination from "../components/Pagination";
-import { fetchPizza } from "../redux/slices/pizzaSlice";
+import { fetchPizza, selectPizzaData } from "../redux/slices/pizzaSlice";
 
-const Home = ({ searchValue }) => {
+const Home = () => {
   const isMounted = useRef(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { categoryId, currentPage, sort } = useSelector(
-    (state) => state.filter
-  );
-  const { items, status } = useSelector((state) => state.pizza);
+  const { categoryId, currentPage, sort, searchValue } =
+    useSelector(selectFilter);
 
+  const { items, status } = useSelector(selectPizzaData);
+  console.log(status);
   const renderPizzas = () =>
     items
       .filter((obj) => obj.title.toLowerCase().includes(searchValue))
@@ -35,7 +35,7 @@ const Home = ({ searchValue }) => {
     dispatch(setCurrentPage(num));
   }
 
-  async function fetchData() {
+  function fetchData() {
     const sortBy = sort.sortProperty.replace("-", "");
     const order = sort.sortProperty.includes("-") ? "asc" : "desc";
     const category = categoryId > 0 ? `category=${categoryId}` : "";
