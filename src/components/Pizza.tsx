@@ -1,14 +1,17 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { selectCartItemById } from "../redux/slices/cartSlice";
-import { selectPizzaData } from "../redux/slices/pizzaSlice";
 import { useEffect } from "react";
 import axios from "axios";
 import { useState } from "react";
 
-const Pizza = () => {
-  const [pizza, setPizza] = useState(null);
+type Pizza = {
+  title: string,
+  price: string,
+  imageUrl: string,
+}
+
+const Pizza: React.FC = () => {
+  const [pizza, setPizza] = useState<Pizza>();
   const { id } = useParams();
 
   useEffect(() => {
@@ -27,7 +30,7 @@ const Pizza = () => {
   }, []);
 
   if (!pizza) {
-    return "Download pizza...";
+    return <h3>"Download pizza...";</h3>;
   }
 
   return (

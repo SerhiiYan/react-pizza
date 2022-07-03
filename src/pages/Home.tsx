@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import qs from "qs";
 import { useNavigate } from "react-router-dom";
 import {
@@ -7,31 +7,32 @@ import {
   setCurrentPage,
   setFilters,
 } from "../redux/slices/filterSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Categories from "../components/Categories";
 import Sort, { sortList } from "../components/Sort";
 import Skeleton from "../components/PizzaBlock/Skeleton";
 import PizzaBlock from "../components/PizzaBlock";
 import Pagination from "../components/Pagination";
 import { fetchPizza, selectPizzaData } from "../redux/slices/pizzaSlice";
+import { useAppDispatch } from "../redux/store";
 
-const Home = () => {
+const Home: React.FC = () => {
   const isMounted = useRef(false);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { categoryId, currentPage, sort, searchValue } =
     useSelector(selectFilter);
 
   const { items, status } = useSelector(selectPizzaData);
-  console.log(status);
+
   const renderPizzas = () =>
     items
-      .filter((obj) => obj.title.toLowerCase().includes(searchValue))
-      .map((obj, index) => <PizzaBlock key={index} {...obj} />);
+      .filter((obj: any) => obj.title.toLowerCase().includes(searchValue))
+      .map((obj: any, index: number) => <PizzaBlock key={index} {...obj} />);
   const renderSkeleton = () =>
     [...new Array(10)].map((_, index) => <Skeleton key={index} />);
 
-  function onChangePage(num) {
+  function onChangePage(num: number) {
     dispatch(setCurrentPage(num));
   }
 
@@ -40,8 +41,13 @@ const Home = () => {
     const order = sort.sortProperty.includes("-") ? "asc" : "desc";
     const category = categoryId > 0 ? `category=${categoryId}` : "";
     const search = searchValue ? `&search${searchValue}` : "";
-    dispatch(fetchPizza({ sortBy, order, category, search, currentPage }));
+    dispatch(
+      fetchPizza({ sortBy, order, category, search, currentPage: String(currentPage) })
+      );
   }
+  const onCategoryId = useCallback((id: number) => { 
+    dispatch(setCategoryId(id))
+  }, [])
 
   useEffect(() => {
     if (window.location.search) {
@@ -51,7 +57,7 @@ const Home = () => {
         (obj) => obj.sortProperty === params.sortProperty
       );
 
-      dispatch(setFilters({ ...params, sort }));
+      dispatch(setFilters({ ...params, sort}));
     }
   }, []);
 
@@ -79,7 +85,7 @@ const Home = () => {
       <div className="content__top">
         <Categories
           categoryId={categoryId}
-          onChangeCategory={(id) => dispatch(setCategoryId(id))}
+          onChangeCategory={onCategoryId}
         />
         <Sort />
       </div>

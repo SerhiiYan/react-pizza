@@ -1,7 +1,12 @@
-import React, { useMemo } from "react";
 import CategoryItem from "./CategoryItem";
 
-function Categories({ categoryId, onChangeCategory }) {
+type CategoriesProps = {
+  categoryId: number,
+  onChangeCategory: (i: number) => void
+}
+
+const Categories: React.FC<CategoriesProps> = ({ categoryId, onChangeCategory }) => {
+
   const categories = [
     "All",
     "Meat",
